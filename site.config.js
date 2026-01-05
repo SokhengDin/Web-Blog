@@ -74,7 +74,7 @@ module.exports = {
   //
   // Option 3: Leave as null to render from content/cv.md (markdown)
   // The markdown option provides the best SEO and accessibility
-  cvFile: null,
+  cvFile: "/cv/cv.png",
 
   // Page Display Configuration
   // Configure how each page should display content
