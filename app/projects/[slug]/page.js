@@ -5,8 +5,11 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import remarkMath from 'remark-math'
+import remarkGfm from 'remark-gfm'
 import rehypeKatex from 'rehype-katex'
 import rehypePrettyCode from 'rehype-pretty-code'
+import rehypeSlug from 'rehype-slug'
+import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import TableOfContents from '../../../components/TableOfContents'
 import { mdxComponents } from '../../../components/MDXComponents'
 import Tags from '../../../components/Tags'
@@ -106,8 +109,13 @@ export default async function ProjectPost({ params }) {
                 components={mdxComponents}
                 options={{
                   mdxOptions: {
-                    remarkPlugins: [remarkMath],
+                    remarkPlugins: [remarkMath, remarkGfm],
                     rehypePlugins: [
+                      rehypeSlug,
+                      [rehypeAutolinkHeadings, {
+                        behavior: 'wrap',
+                        properties: { className: ['anchor'] }
+                      }],
                       rehypeKatex,
                       [rehypePrettyCode, {
                         theme: 'github-dark',
