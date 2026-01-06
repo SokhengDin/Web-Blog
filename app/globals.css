@@ -530,7 +530,7 @@ body {
 /* Print optimizations for CV */
 @media print {
   /* Hide all non-essential elements */
-  header, nav, footer, .print\\:hidden {
+  header, nav, footer {
     display: none !important;
   }
 
