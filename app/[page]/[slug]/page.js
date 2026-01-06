@@ -14,6 +14,67 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import TableOfContents from '../../../components/TableOfContents'
 import { mdxComponents } from '../../../components/MDXComponents'
 import Tags from '../../../components/Tags'
+import siteConfig from '../../../site.config'
+
+// Generate metadata for individual posts
+export async function generateMetadata({ params }) {
+  const { page, slug } = await params
+  const filePath = path.join(process.cwd(), 'content', page, `${slug}.md`)
+
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    return {
+      title: 'Not Found',
+      description: 'Page not found'
+    }
+  }
+
+  const fileContents = fs.readFileSync(filePath, 'utf8')
+  const { data } = matter(fileContents)
+
+  const postTitle = data.title || slug
+  const postDescription = data.description || data.excerpt || `${postTitle} - ${siteConfig.name}`
+  const postImage = data.thumbnail || siteConfig.profileImage || '/images/og-image.png'
+  const postUrl = `${siteConfig.siteUrl}/${page}/${slug}`
+
+  // Format date for article metadata
+  const publishedTime = data.date instanceof Date
+    ? data.date.toISOString()
+    : data.date
+      ? new Date(data.date).toISOString()
+      : undefined
+
+  return {
+    title: postTitle,
+    description: postDescription,
+    keywords: data.tags || [],
+    authors: [{ name: siteConfig.author || siteConfig.name }],
+    openGraph: {
+      title: `${postTitle} | ${siteConfig.title}`,
+      description: postDescription,
+      url: postUrl,
+      type: 'article',
+      publishedTime,
+      authors: [siteConfig.author || siteConfig.name],
+      tags: data.tags || [],
+      images: [
+        {
+          url: postImage,
+          width: 1200,
+          height: 630,
+          alt: postTitle,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${postTitle} | ${siteConfig.title}`,
+      description: postDescription,
+      images: [postImage],
+      creator: siteConfig.social?.twitter?.replace('https://twitter.com/', '@') || '@yourusername',
+    },
+  }
+}
 
 export async function generateStaticParams() {
   const contentDirectory = path.join(process.cwd(), 'content')

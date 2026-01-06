@@ -4,6 +4,33 @@ import CVButtons from '../../components/CVButtons'
 import siteConfig from '../../site.config'
 import Image from 'next/image'
 
+export async function generateMetadata() {
+  return {
+    title: 'CV',
+    description: `Curriculum Vitae of ${siteConfig.name} - ${siteConfig.role} at ${siteConfig.affiliation}`,
+    openGraph: {
+      title: `CV | ${siteConfig.title}`,
+      description: `Curriculum Vitae of ${siteConfig.name} - ${siteConfig.role} at ${siteConfig.affiliation}`,
+      url: `${siteConfig.siteUrl}/cv`,
+      type: 'profile',
+      images: [
+        {
+          url: siteConfig.profileImage || '/images/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: `${siteConfig.name} CV`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `CV | ${siteConfig.title}`,
+      description: `Curriculum Vitae of ${siteConfig.name} - ${siteConfig.role} at ${siteConfig.affiliation}`,
+      images: [siteConfig.profileImage || '/images/og-image.png'],
+    },
+  }
+}
+
 export default function CVPage() {
   const cvFile = siteConfig.cvFile
   const isPdf = cvFile && cvFile.toLowerCase().endsWith('.pdf')

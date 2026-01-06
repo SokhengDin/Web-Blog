@@ -13,6 +13,76 @@ import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import { mdxComponents } from '../../components/MDXComponents'
 
+// Generate metadata for each collection/simple page
+export async function generateMetadata({ params }) {
+  const { page } = await params
+  const singlePagePath = path.join(process.cwd(), 'content', `${page}.md`)
+
+  // For simple pages (single .md file)
+  if (fs.existsSync(singlePagePath)) {
+    const fileContents = fs.readFileSync(singlePagePath, 'utf8')
+    const matter = require('gray-matter')
+    const { data } = matter(fileContents)
+
+    const pageTitle = data.title || page.charAt(0).toUpperCase() + page.slice(1)
+    const pageDescription = data.description || `${pageTitle} - ${siteConfig.name}`
+
+    return {
+      title: pageTitle,
+      description: pageDescription,
+      openGraph: {
+        title: `${pageTitle} | ${siteConfig.title}`,
+        description: pageDescription,
+        url: `${siteConfig.siteUrl}/${page}`,
+        type: 'website',
+        images: [
+          {
+            url: data.thumbnail || siteConfig.profileImage || '/images/og-image.png',
+            width: 1200,
+            height: 630,
+            alt: pageTitle,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${pageTitle} | ${siteConfig.title}`,
+        description: pageDescription,
+        images: [data.thumbnail || siteConfig.profileImage || '/images/og-image.png'],
+      },
+    }
+  }
+
+  // For collection pages (folder with multiple .md files)
+  const pageTitle = page.charAt(0).toUpperCase() + page.slice(1)
+  const pageDescription = `Browse ${page} by ${siteConfig.name}`
+
+  return {
+    title: pageTitle,
+    description: pageDescription,
+    openGraph: {
+      title: `${pageTitle} | ${siteConfig.title}`,
+      description: pageDescription,
+      url: `${siteConfig.siteUrl}/${page}`,
+      type: 'website',
+      images: [
+        {
+          url: siteConfig.profileImage || '/images/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: pageTitle,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${pageTitle} | ${siteConfig.title}`,
+      description: pageDescription,
+      images: [siteConfig.profileImage || '/images/og-image.png'],
+    },
+  }
+}
+
 // Generate static params for all content folders
 export async function generateStaticParams() {
   const contentDirectory = path.join(process.cwd(), 'content')
