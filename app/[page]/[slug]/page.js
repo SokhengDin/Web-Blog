@@ -222,6 +222,12 @@ export default async function DynamicPost({ params }) {
 
             {htmlContent ? (
               <>
+                {/* Load MathJax for R Markdown math rendering */}
+                <script
+                  src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+                  async
+                ></script>
+
                 {/* Load custom CSS files */}
                 {cssFiles.length > 0 && cssFiles.map((cssFile, index) => (
                   <link key={index} rel="stylesheet" href={cssFile} />
