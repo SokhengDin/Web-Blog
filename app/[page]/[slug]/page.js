@@ -224,7 +224,7 @@ export default async function DynamicPost({ params }) {
               <>
                 {/* Load MathJax for R Markdown math rendering */}
                 <script
-                  src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+                  src="/mathjax/es5/tex-mml-chtml.js"
                   async
                 ></script>
 
